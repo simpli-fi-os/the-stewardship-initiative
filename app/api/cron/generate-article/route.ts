@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase'
+
+export const dynamic = 'force-dynamic'
 
 const TOPICS = [
   'Why Every Church Needs a Skills Directory (Not Just a Photo Directory)',
@@ -20,6 +21,7 @@ export async function GET(request: Request) {
   }
 
   try {
+    const { createServerClient } = await import('@/lib/supabase')
     const supabase = createServerClient()
 
     // Pick a random topic
