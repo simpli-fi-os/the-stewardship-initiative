@@ -83,6 +83,12 @@ export default function DirectoryView({ members, orgName, orgSlug, orgLogoUrl, o
             <p className="mt-2 text-lg opacity-90">
               Connecting needs with the giftedness of our church family.
             </p>
+            <a
+              href={`/directory/${orgSlug}/join`}
+              className="inline-block mt-4 bg-white text-[#082A52] font-semibold px-6 py-2 rounded-md hover:bg-gray-100 transition text-sm"
+            >
+              Join This Directory
+            </a>
           </div>
         </header>
 
