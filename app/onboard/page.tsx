@@ -117,12 +117,12 @@ export default function OnboardPage() {
                 </div>
               ))}
             </div>
-            <Link
-              href="/setup-guide"
+            <a
+              href="mailto:hunter@simpli-fi-os.com?subject=TSI%20-%20Onboard%20My%20Community"
               className="mt-16 inline-block bg-gray-800 text-white font-bold py-4 px-10 rounded-lg shadow-lg hover:bg-gray-700 transition-all duration-300 transform hover:scale-105"
             >
-              Start the Setup Process
-            </Link>
+              Get Started — Contact Us
+            </a>
           </div>
         </section>
       </main>

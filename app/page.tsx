@@ -56,7 +56,7 @@ export default function HomePage() {
               <Link href="/find-resources" className="btn-secondary w-full sm:w-auto text-center">
                 Find Resources
               </Link>
-              <Link href="/connect" className="btn-secondary w-full sm:w-auto text-center">
+              <Link href="/onboard" className="btn-secondary w-full sm:w-auto text-center">
                 Share Your Gifts
               </Link>
             </div>
