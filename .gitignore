@@ -16,15 +16,11 @@ Thumbs.db
 vendor/
 node_modules/
 
-# Build output
+# Next.js
 .next/
 out/
 dist/
 build/
-
-# Logs
-*.log
-npm-debug.log*
 
 # Vercel
 .vercel
@@ -32,7 +28,10 @@ npm-debug.log*
 # Supabase
 supabase/.temp/
 
-# Cache
+# Logs
+*.log
+
+# Compiled / cache
 *.cache
 /tmp/
 
