@@ -92,7 +92,7 @@ export async function fetchDirectoryData(slug: string): Promise<{ org: Organizat
   const { data: membersData, error: membersError } = await supabase
     .from('members')
     .select(`
-      id, org_id, name, title, email, phone, website, photo_url, bio, description, available, featured,
+      id, org_id, name, title, email, phone, website, photo_url, bio, description, available, featured, approved,
       member_skills (
         skills (id, name, color, icon)
       )
