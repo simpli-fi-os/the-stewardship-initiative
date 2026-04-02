@@ -247,6 +247,67 @@ body {
 }
 
 /* ============================================
+   GLASSMORPHISM & GLOW EFFECTS
+   ============================================ */
+
+.eden-glass {
+  background: rgba(3, 63, 50, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(38, 166, 154, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.glow-marigold {
+  box-shadow: 0 0 40px rgba(253, 184, 51, 0.08);
+}
+
+.glow-tidal {
+  box-shadow: 0 0 40px rgba(38, 166, 154, 0.08);
+}
+
+.glow-hibiscus {
+  box-shadow: 0 0 40px rgba(217, 3, 104, 0.06);
+}
+
+/* Radial glow behind sections */
+.section-glow::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(ellipse, rgba(253, 184, 51, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ============================================
+   SCROLL CHEVRON
+   ============================================ */
+
+@keyframes scrollBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(8px); opacity: 1; }
+}
+
+.scroll-indicator {
+  animation: scrollBounce 2s ease-in-out infinite;
+}
+
+/* ============================================
+   VALUE STACK
+   ============================================ */
+
+.value-strikethrough {
+  text-decoration: line-through;
+  text-decoration-color: rgba(169, 68, 63, 0.6);
+  text-decoration-thickness: 2px;
+}
+
+/* ============================================
    DIRECTORY CARD STYLES
    ============================================ */
 

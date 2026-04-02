@@ -22,6 +22,9 @@ const config: Config = {
           'redwood': '#A44A3F',
           'gray': '#D1D5DB',
         },
+        sage: '#4A7C6F',
+        mist: '#E8F0ED',
+        cream: '#FFF9F0',
       },
       animation: {
         'heartbeat': 'heartbeat 2s ease-in-out infinite',
