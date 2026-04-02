@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase-server'
+import { sendMemberApprovedEmail } from '@/lib/email'
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   // Verify auth via cookie
   const accessToken = request.cookies.get('sb-access-token')?.value
@@ -11,7 +12,7 @@ export async function PATCH(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const memberId = params.id
+  const { id: memberId } = await params
   const body = await request.json()
   const { action } = body as { action: 'approve' | 'reject' | 'toggle-featured' }
 
@@ -31,6 +32,25 @@ export async function PATCH(
       .single()
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+    // Send approval notification email
+    const { data: memberInfo } = await supabase
+      .from('members')
+      .select('name, email, org_id')
+      .eq('id', memberId)
+      .single()
+
+    if (memberInfo?.email) {
+      const { data: org } = await supabase
+        .from('organizations')
+        .select('slug')
+        .eq('id', memberInfo.org_id)
+        .single()
+
+      const directoryUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'https://thestewardshipinitiative.org'}/directory/${org?.slug || ''}`
+      await sendMemberApprovedEmail(memberInfo.email, memberInfo.name, directoryUrl)
+    }
+
     return NextResponse.json({ member: data })
   }
 
