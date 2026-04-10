@@ -127,7 +127,7 @@ All new pages follow the Garden of Eden design system exactly:
 4. Click **Run**
 5. Verify: Check that `profiles` table exists in Table Editor
 
-**Note:** The Supabase project at `ckfhtprqifukudqmfzck.supabase.co` was unreachable during this session (DNS resolution failed). It may be paused — check the Supabase dashboard and resume if needed.
+**Note:** The original Supabase project (`ckfhtprqifukudqmfzck`) referenced here is DEPRECATED and inactive. TSI now uses project `kfwtxtjqpsmxpwcndude` on the Simpli-FI OS organization. Update your `.env.local` accordingly.
 
 ### Step 2: Enable Auth in Supabase
 1. Go to **Authentication** → **Providers**
