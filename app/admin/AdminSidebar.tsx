@@ -47,6 +47,15 @@ const navItems = [
     ),
   },
   {
+    href: '/admin/listings',
+    label: 'Listings',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 11H3v2h6v-2zm0-4H3v2h6V7zm6 0v2h6V7h-6zm0 4v2h6v-2h-6zM9 3H3v2h6V3zm6 0v2h6V3h-6z" />
+      </svg>
+    ),
+  },
+  {
     href: '/admin/analytics',
     label: 'Analytics',
     icon: (

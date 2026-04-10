@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
+import Header from '@/components/Header'
+import Navigation from '@/components/Navigation'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -55,6 +57,8 @@ export default function RootLayout({
         <a href="#main-content" className="skip-nav">
           Skip to main content
         </a>
+        <Navigation />
+        <Header />
         {children}
       </body>
     </html>

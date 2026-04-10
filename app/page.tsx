@@ -6,6 +6,7 @@ import ConstellationCanvas from '@/components/ConstellationCanvas'
 import ScrollReveal from '@/components/ScrollReveal'
 import AnimatedCounter from '@/components/AnimatedCounter'
 import NewsletterSignup from '@/components/NewsletterSignup'
+import ExploreSection from '@/components/ExploreSection'
 
 /* =============================================
    SECTION 1: HERO
@@ -881,6 +882,7 @@ export default function HomePage() {
       <StorefrontsSection />
       <ValuePropSection />
       <ValueStackSection />
+      <ExploreSection />
       <ObjectionsSection />
       <FinalCtaSection />
       <EnhancedFooter />
