@@ -59,7 +59,7 @@ export interface ListingSearchResult {
   premium_tier: 'free' | 'featured' | 'premium' | 'sponsored'
   tags: string[] | null
   photo_url: string | null
-  distance_miles: number | null
+  distance_miles?: number | null
   salary?: {
     starting: number | null
     mid: number | null
