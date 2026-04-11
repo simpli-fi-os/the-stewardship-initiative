@@ -1,259 +1,226 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState, useEffect, useCallback } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import ListingCard from '@/components/directory/ListingCard'
 
-interface Listing {
+interface SearchResult {
   id: string
-  slug: string
+  type: string
+  subtype: string
   name: string
-  category: string
-  location: string
-  county: string
+  slug: string
+  city: string
+  state: string
   rating: number
-  ratingCount: number
-  description: string
+  review_count: number
+  premium_tier: string | null
   tags: string[]
-  isPremium: boolean
+  photo_url: string | null
+  description?: string
 }
 
-const MOCK_LISTINGS: Listing[] = [
-  {
-    id: '1',
-    slug: 'village-food-pantry',
-    name: 'Village Food Pantry',
-    category: 'Food',
-    location: 'Denton',
-    county: 'Denton County',
-    rating: 4.8,
-    ratingCount: 34,
-    description: 'Community-run food pantry serving families in need with fresh groceries and essentials.',
-    tags: ['Food Security', 'Community'],
-    isPremium: false,
-  },
-  {
-    id: '2',
-    slug: 'denton-legal-aid',
-    name: 'Denton Legal Aid Society',
-    category: 'Legal',
-    location: 'Denton',
-    county: 'Denton County',
-    rating: 4.9,
-    ratingCount: 28,
-    description: 'Free legal services for low-income residents on family, housing, and employment law.',
-    tags: ['Legal Services', 'Pro Bono'],
-    isPremium: true,
-  },
-  {
-    id: '3',
-    slug: 'community-health-clinic',
-    name: 'Community Health Clinic',
-    category: 'Medical',
-    location: 'Denton',
-    county: 'Denton County',
-    rating: 4.7,
-    ratingCount: 52,
-    description: 'Affordable primary care, dental, and mental health services for all community members.',
-    tags: ['Healthcare', 'Affordable Care'],
-    isPremium: false,
-  },
-  {
-    id: '4',
-    slug: 'denton-job-center',
-    name: 'Denton Job Center',
-    category: 'Jobs',
-    location: 'Denton',
-    county: 'Denton County',
-    rating: 4.5,
-    ratingCount: 18,
-    description: 'Job training, resume assistance, and employment counseling for community members.',
-    tags: ['Employment', 'Training'],
-    isPremium: false,
-  },
-  {
-    id: '5',
-    slug: 'denton-tax-pro',
-    name: 'Denton Tax Professionals',
-    category: 'Tax Professional',
-    location: 'Denton',
-    county: 'Denton County',
-    rating: 4.9,
-    ratingCount: 42,
-    description: 'Professional tax preparation and planning services for individuals and small businesses.',
-    tags: ['Accounting', 'Tax Planning'],
-    isPremium: true,
-  },
-  {
-    id: '6',
-    slug: 'housing-authority',
-    name: 'Denton Housing Authority',
-    category: 'Housing',
-    location: 'Denton',
-    county: 'Denton County',
-    rating: 4.3,
-    ratingCount: 15,
-    description: 'Affordable housing programs and rental assistance for low-income families.',
-    tags: ['Housing', 'Assistance'],
-    isPremium: false,
-  },
-]
+interface Facets {
+  types: Record<string, number>
+  subtypes: Record<string, number>
+  states: Record<string, number>
+  counties: Record<string, number>
+  categories: Record<string, number>
+}
 
-const CATEGORIES = ['All', 'Resources', 'Providers', 'Churches', 'Nonprofits']
-const RESOURCE_TYPES = ['Food', 'Housing', 'Medical', 'Jobs', 'Education', 'Mental Health']
-const PROVIDER_TYPES = ['Financial Advisor', 'Tax Professional', 'Insurance', 'Real Estate', 'Legal', 'Accounting']
-const CITIES = ['Denton', 'Lewisville', 'Flower Mound', 'Highland Village']
-const TAGS = ['Community', 'Affordable', 'Professional', 'Pro Bono', 'Nonprofit']
+function subtypeLabel(subtype: string): string {
+  return subtype
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+}
 
 export default function SearchClient() {
   const searchParams = useSearchParams()
+  const router = useRouter()
+
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '')
-  const [type, setType] = useState(searchParams.get('type') || 'all')
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
-  const [selectedCity, setSelectedCity] = useState('Denton')
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [minRating, setMinRating] = useState(0)
-  const [sortBy, setSortBy] = useState('relevance')
-  const [results, setResults] = useState<Listing[]>(MOCK_LISTINGS)
+  const [type, setType] = useState(searchParams.get('type') || '')
+  const [subtype, setSubtype] = useState(searchParams.get('subtype') || '')
+  const [city, setCity] = useState(searchParams.get('city') || '')
+  const [minRating, setMinRating] = useState(Number(searchParams.get('min_rating')) || 0)
+  const [sortBy, setSortBy] = useState(searchParams.get('sort') || 'rating_desc')
+  const [results, setResults] = useState<SearchResult[]>([])
+  const [facets, setFacets] = useState<Facets | null>(null)
+  const [total, setTotal] = useState(0)
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+  const perPage = 20
+
+  const fetchResults = useCallback(async () => {
+    setLoading(true)
+    try {
+      const params = new URLSearchParams()
+      if (searchQuery.trim()) params.set('q', searchQuery.trim())
+      if (type) params.set('type', type)
+      if (subtype) params.set('subtype', subtype)
+      if (city) params.set('city', city)
+      if (minRating > 0) params.set('min_rating', String(minRating))
+      if (sortBy) params.set('sort', sortBy)
+      params.set('page', String(page))
+      params.set('per_page', String(perPage))
+
+      const res = await fetch(`/api/search?${params.toString()}`)
+      if (!res.ok) throw new Error('Search failed')
+
+      const data = await res.json()
+      setResults(data.results || [])
+      setFacets(data.facets || null)
+      setTotal(data.total || 0)
+    } catch (err) {
+      console.error('Search error:', err)
+      setResults([])
+      setTotal(0)
+    } finally {
+      setLoading(false)
+    }
+  }, [searchQuery, type, subtype, city, minRating, sortBy, page])
 
   useEffect(() => {
-    let filtered = MOCK_LISTINGS
+    fetchResults()
+  }, [fetchResults])
 
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase()
-      filtered = filtered.filter(
-        (l) =>
-          l.name.toLowerCase().includes(q) ||
-          l.description.toLowerCase().includes(q) ||
-          l.tags.some((t) => t.toLowerCase().includes(q))
-      )
-    }
+  // Sync URL params on initial load
+  useEffect(() => {
+    const q = searchParams.get('q') || ''
+    const t = searchParams.get('type') || ''
+    const st = searchParams.get('subtype') || ''
+    if (q !== searchQuery) setSearchQuery(q)
+    if (t !== type) setType(t)
+    if (st !== subtype) setSubtype(st)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams])
 
-    if (type === 'resources') {
-      filtered = filtered.filter((l) => RESOURCE_TYPES.includes(l.category))
-    } else if (type === 'providers') {
-      filtered = filtered.filter((l) => PROVIDER_TYPES.includes(l.category))
-    }
-
-    if (selectedCategories.length > 0) {
-      filtered = filtered.filter((l) => selectedCategories.includes(l.category))
-    }
-
-    filtered = filtered.filter((l) => l.county.includes(selectedCity) || selectedCity === 'all')
-
-    if (selectedTags.length > 0) {
-      filtered = filtered.filter((l) => selectedTags.some((t) => l.tags.includes(t)))
-    }
-
-    filtered = filtered.filter((l) => l.rating >= minRating)
-
-    if (sortBy === 'a-z') {
-      filtered.sort((a, b) => a.name.localeCompare(b.name))
-    } else if (sortBy === 'rating') {
-      filtered.sort((a, b) => b.rating - a.rating)
-    } else if (sortBy === 'newest') {
-      filtered.reverse()
-    }
-
-    setResults(filtered)
-  }, [searchQuery, type, selectedCategories, selectedCity, selectedTags, minRating, sortBy])
-
-  const toggleCategory = (category: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
-    )
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    setPage(1)
+    fetchResults()
   }
 
-  const toggleTag = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
-    )
+  const setTypeFilter = (newType: string) => {
+    setType(newType)
+    setSubtype('')
+    setPage(1)
   }
 
   const clearFilters = () => {
-    setSelectedCategories([])
-    setSelectedCity('Denton')
-    setSelectedTags([])
+    setType('')
+    setSubtype('')
+    setCity('')
     setMinRating(0)
+    setPage(1)
   }
 
-  const hasActiveFilters = selectedCategories.length > 0 || selectedCity !== 'Denton' || selectedTags.length > 0 || minRating > 0
+  const hasActiveFilters = !!type || !!subtype || !!city || minRating > 0
+
+  // Map API result to ListingCard props
+  const toCardProps = (r: SearchResult) => ({
+    id: r.id,
+    slug: r.slug,
+    name: r.name,
+    category: subtypeLabel(r.subtype || r.type),
+    location: r.city || '',
+    county: '',
+    rating: r.rating || 0,
+    ratingCount: r.review_count || 0,
+    description: r.description || '',
+    tags: (r.tags || []).slice(0, 3),
+    isPremium: r.premium_tier === 'featured' || r.premium_tier === 'premium',
+  })
+
+  const subtypeOptions = facets?.subtypes
+    ? Object.entries(facets.subtypes)
+        .sort((a, b) => b[1] - a[1])
+        .map(([key, count]) => ({ key, label: subtypeLabel(key), count }))
+    : []
+
+  const cityOptions = facets?.counties
+    ? Object.entries(facets.counties)
+        .sort((a, b) => b[1] - a[1])
+        .map(([key, count]) => ({ key, label: key, count }))
+    : []
+
+  const totalPages = Math.ceil(total / perPage)
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-      {/* Sidebar */}
-      <aside className="lg:col-span-1">
-        <div className="space-y-6 bg-eden-lush p-6 rounded-lg border border-eden-marigold/30 sticky top-24">
-          <div>
+    <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Sidebar */}
+        <aside className="lg:col-span-1">
+          <div className="space-y-6 bg-eden-lush p-6 rounded-lg border border-eden-marigold/30 sticky top-24">
             <h3 className="font-display font-bold text-eden-orchid mb-4">Filters</h3>
 
-            {/* Category Filter */}
+            {/* Type Filter */}
             <div className="mb-6">
-              <h4 className="text-sm font-semibold text-eden-gray mb-3">Category</h4>
+              <h4 className="text-sm font-semibold text-eden-gray mb-3">Type</h4>
               <div className="space-y-2">
-                {(type === 'resources' ? RESOURCE_TYPES : type === 'providers' ? PROVIDER_TYPES : [...RESOURCE_TYPES, ...PROVIDER_TYPES]).map(
-                  (category) => (
-                    <label key={category} className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedCategories.includes(category)}
-                        onChange={() => toggleCategory(category)}
-                        className="w-4 h-4 rounded border-eden-marigold/50"
-                      />
-                      <span className="text-sm text-eden-orchid/80">{category}</span>
-                    </label>
-                  )
-                )}
-              </div>
-            </div>
-
-            {/* City Filter */}
-            <div className="mb-6">
-              <h4 className="text-sm font-semibold text-eden-gray mb-3">City</h4>
-              <select
-                value={selectedCity}
-                onChange={(e) => setSelectedCity(e.target.value)}
-                className="w-full px-3 py-2 bg-eden-jungle border border-eden-marigold/30 rounded text-eden-orchid text-sm focus:outline-none focus:border-eden-marigold"
-              >
-                <option value="all">All Cities</option>
-                {CITIES.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Tags Filter */}
-            <div className="mb-6">
-              <h4 className="text-sm font-semibold text-eden-gray mb-3">Tags</h4>
-              <div className="space-y-2">
-                {TAGS.map((tag) => (
-                  <label key={tag} className="flex items-center gap-2 cursor-pointer">
+                {['', 'resource', 'provider'].map((t) => (
+                  <label key={t || 'all'} className="flex items-center gap-2 cursor-pointer">
                     <input
-                      type="checkbox"
-                      checked={selectedTags.includes(tag)}
-                      onChange={() => toggleTag(tag)}
-                      className="w-4 h-4 rounded border-eden-marigold/50"
+                      type="radio"
+                      name="type"
+                      checked={type === t}
+                      onChange={() => setTypeFilter(t)}
+                      className="w-4 h-4 border-eden-marigold/50"
                     />
-                    <span className="text-sm text-eden-orchid/80">{tag}</span>
+                    <span className="text-sm text-eden-orchid/80">
+                      {t === '' ? 'All' : t === 'resource' ? 'Resources' : 'Providers'}
+                      {facets?.types?.[t] ? ` (${facets.types[t]})` : ''}
+                    </span>
                   </label>
                 ))}
               </div>
             </div>
+
+            {/* Subtype Filter */}
+            {subtypeOptions.length > 0 && (
+              <div className="mb-6">
+                <h4 className="text-sm font-semibold text-eden-gray mb-3">Category</h4>
+                <select
+                  value={subtype}
+                  onChange={(e) => { setSubtype(e.target.value); setPage(1) }}
+                  className="w-full px-3 py-2 bg-eden-jungle border border-eden-marigold/30 rounded text-eden-orchid text-sm focus:outline-none focus:border-eden-marigold"
+                >
+                  <option value="">All Categories</option>
+                  {subtypeOptions.map((opt) => (
+                    <option key={opt.key} value={opt.key}>
+                      {opt.label} ({opt.count})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Rating Filter */}
             <div className="mb-6">
               <h4 className="text-sm font-semibold text-eden-gray mb-3">Minimum Rating</h4>
               <select
                 value={minRating}
-                onChange={(e) => setMinRating(Number(e.target.value))}
+                onChange={(e) => { setMinRating(Number(e.target.value)); setPage(1) }}
                 className="w-full px-3 py-2 bg-eden-jungle border border-eden-marigold/30 rounded text-eden-orchid text-sm focus:outline-none focus:border-eden-marigold"
               >
                 <option value={0}>All</option>
                 <option value={3}>3+</option>
                 <option value={4}>4+</option>
                 <option value={4.5}>4.5+</option>
+              </select>
+            </div>
+
+            {/* Sort */}
+            <div className="mb-6">
+              <h4 className="text-sm font-semibold text-eden-gray mb-3">Sort By</h4>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full px-3 py-2 bg-eden-jungle border border-eden-marigold/30 rounded text-eden-orchid text-sm focus:outline-none focus:border-eden-marigold"
+              >
+                <option value="rating_desc">Highest Rated</option>
+                <option value="name_asc">A-Z</option>
+                <option value="name_desc">Z-A</option>
               </select>
             </div>
 
@@ -266,111 +233,112 @@ export default function SearchClient() {
               </button>
             )}
           </div>
-        </div>
-      </aside>
+        </aside>
 
-      {/* Main Content */}
-      <div className="lg:col-span-3">
-        {/* Search Bar */}
-        <div className="mb-8 flex flex-col sm:flex-row gap-4">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search listings..."
-            className="flex-1 px-4 py-3 bg-eden-lush border border-eden-marigold/30 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-marigold"
-          />
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="px-4 py-3 bg-eden-lush border border-eden-marigold/30 rounded-lg text-eden-orchid focus:outline-none focus:border-eden-marigold"
-          >
-            <option value="relevance">Relevance</option>
-            <option value="a-z">A-Z</option>
-            <option value="rating">Rating</option>
-            <option value="newest">Newest</option>
-          </select>
-        </div>
-
-        {/* Type Filters */}
-        <div className="flex gap-2 mb-8 flex-wrap">
-          {CATEGORIES.map((category) => (
+        {/* Main Content */}
+        <div className="lg:col-span-3">
+          {/* Search Bar */}
+          <form onSubmit={handleSearch} className="mb-8 flex flex-col sm:flex-row gap-4">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search listings..."
+              className="flex-1 px-4 py-3 bg-eden-lush border border-eden-marigold/30 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-marigold"
+            />
             <button
-              key={category}
-              onClick={() => setType(category.toLowerCase() === 'all' ? 'all' : category.toLowerCase())}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                (category.toLowerCase() === 'all' && type === 'all') ||
-                (category.toLowerCase() !== 'all' && type === category.toLowerCase())
-                  ? 'bg-eden-marigold text-eden-jungle'
-                  : 'bg-eden-lush border border-eden-marigold/30 text-eden-orchid hover:border-eden-marigold'
-              }`}
+              type="submit"
+              className="px-6 py-3 bg-eden-marigold text-eden-jungle font-semibold rounded-lg hover:bg-eden-marigold/90 transition-colors"
             >
-              {category}
+              Search
             </button>
-          ))}
-        </div>
+          </form>
 
-        {/* Active Filters */}
-        {hasActiveFilters && (
-          <div className="mb-6 flex flex-wrap gap-2">
-            {selectedCategories.map((cat) => (
-              <span key={cat} className="px-3 py-1 text-xs bg-eden-hibiscus/20 text-eden-hibiscus rounded-full flex items-center gap-2">
-                {cat}
-                <button onClick={() => toggleCategory(cat)} className="hover:opacity-70">
-                  ×
-                </button>
-              </span>
-            ))}
-            {selectedCity !== 'Denton' && (
-              <span className="px-3 py-1 text-xs bg-eden-hibiscus/20 text-eden-hibiscus rounded-full flex items-center gap-2">
-                {selectedCity}
-                <button onClick={() => setSelectedCity('Denton')} className="hover:opacity-70">
-                  ×
-                </button>
-              </span>
-            )}
-            {selectedTags.map((tag) => (
-              <span key={tag} className="px-3 py-1 text-xs bg-eden-hibiscus/20 text-eden-hibiscus rounded-full flex items-center gap-2">
-                {tag}
-                <button onClick={() => toggleTag(tag)} className="hover:opacity-70">
-                  ×
-                </button>
-              </span>
-            ))}
-            {minRating > 0 && (
-              <span className="px-3 py-1 text-xs bg-eden-hibiscus/20 text-eden-hibiscus rounded-full flex items-center gap-2">
-                {minRating}+ Rating
-                <button onClick={() => setMinRating(0)} className="hover:opacity-70">
-                  ×
-                </button>
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Results */}
-        {results.length > 0 ? (
-          <>
-            <p className="text-sm text-eden-gray mb-6">
-              Found {results.length} result{results.length !== 1 ? 's' : ''}
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {results.map((listing) => (
-                <ListingCard key={listing.id} {...listing} />
-              ))}
+          {/* Active Filters */}
+          {hasActiveFilters && (
+            <div className="mb-6 flex flex-wrap gap-2">
+              {type && (
+                <span className="px-3 py-1 text-xs bg-eden-hibiscus/20 text-eden-hibiscus rounded-full flex items-center gap-2">
+                  {type === 'resource' ? 'Resources' : 'Providers'}
+                  <button onClick={() => setTypeFilter('')} className="hover:opacity-70">×</button>
+                </span>
+              )}
+              {subtype && (
+                <span className="px-3 py-1 text-xs bg-eden-hibiscus/20 text-eden-hibiscus rounded-full flex items-center gap-2">
+                  {subtypeLabel(subtype)}
+                  <button onClick={() => { setSubtype(''); setPage(1) }} className="hover:opacity-70">×</button>
+                </span>
+              )}
+              {city && (
+                <span className="px-3 py-1 text-xs bg-eden-hibiscus/20 text-eden-hibiscus rounded-full flex items-center gap-2">
+                  {city}
+                  <button onClick={() => { setCity(''); setPage(1) }} className="hover:opacity-70">×</button>
+                </span>
+              )}
+              {minRating > 0 && (
+                <span className="px-3 py-1 text-xs bg-eden-hibiscus/20 text-eden-hibiscus rounded-full flex items-center gap-2">
+                  {minRating}+ Rating
+                  <button onClick={() => { setMinRating(0); setPage(1) }} className="hover:opacity-70">×</button>
+                </span>
+              )}
             </div>
-          </>
-        ) : (
-          <div className="text-center py-12">
-            <p className="text-eden-gray mb-4">No listings found matching your filters.</p>
-            <button
-              onClick={clearFilters}
-              className="text-eden-marigold hover:text-eden-marigold/80 font-semibold transition-colors"
-            >
-              Clear filters and try again
-            </button>
-          </div>
-        )}
+          )}
+
+          {/* Results */}
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="inline-block w-8 h-8 border-2 border-eden-marigold/30 border-t-eden-marigold rounded-full animate-spin mb-4" />
+              <p className="text-eden-gray">Searching...</p>
+            </div>
+          ) : results.length > 0 ? (
+            <>
+              <p className="text-sm text-eden-gray mb-6">
+                Found {total} result{total !== 1 ? 's' : ''}
+                {searchQuery && <> for &ldquo;{searchQuery}&rdquo;</>}
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {results.map((r) => (
+                  <ListingCard key={r.id} {...toCardProps(r)} />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-10 flex justify-center gap-2">
+                  <button
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    className="px-4 py-2 rounded bg-eden-lush border border-eden-marigold/30 text-eden-orchid disabled:opacity-40 hover:border-eden-marigold transition-colors"
+                  >
+                    Previous
+                  </button>
+                  <span className="px-4 py-2 text-eden-gray text-sm flex items-center">
+                    Page {page} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    className="px-4 py-2 rounded bg-eden-lush border border-eden-marigold/30 text-eden-orchid disabled:opacity-40 hover:border-eden-marigold transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-eden-gray mb-4">No listings found matching your search.</p>
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="text-eden-marigold hover:text-eden-marigold/80 font-semibold transition-colors"
+                >
+                  Clear filters and try again
+                </button>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

@@ -7,9 +7,9 @@ meta_description: "Honest, established auto repair shops in Denton County, TX. A
 tags: ["auto-repair", "denton-county", "mechanic", "car-maintenance", "ase-certified"]
 word_count: 950
 publish_date: ""
-status: "draft"
+status: "approved"
 author: "TSI Content Engine"
-reviewed_by: ""
+reviewed_by: "exec-content-review"
 ---
 
 # Trusted Auto Repair Shops in Denton County

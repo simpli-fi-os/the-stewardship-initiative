@@ -7,9 +7,9 @@ meta_description: "Trusted roofing, HVAC, and home repair pros in Denton County,
 tags: ["home-services", "denton-county", "roofing", "hvac", "contractors"]
 word_count: 1050
 publish_date: ""
-status: "draft"
+status: "approved"
 author: "TSI Content Engine"
-reviewed_by: ""
+reviewed_by: "exec-content-review"
 ---
 
 # Finding Trusted Home Services in Denton County

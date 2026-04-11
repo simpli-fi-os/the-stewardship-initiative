@@ -7,9 +7,9 @@ meta_description: "How to choose a family law attorney in Denton County, TX. Boa
 tags: ["family-law", "attorney", "denton-county", "divorce", "child-custody"]
 word_count: 1020
 publish_date: ""
-status: "draft"
+status: "approved"
 author: "TSI Content Engine"
-reviewed_by: ""
+reviewed_by: "exec-content-review"
 ---
 
 # Finding a Family Law Attorney in Denton County
