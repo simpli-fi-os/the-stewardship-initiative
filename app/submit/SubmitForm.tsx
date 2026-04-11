@@ -20,9 +20,9 @@ export default function SubmitForm() {
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<Partial<ListingSubmission>>({})
   const [progress, setProgress] = useState<SubmissionProgress>({
-    currentStep: 1,
+    currentStep: 'type',
     completedSteps: [],
-    data: {},
+    formData: {},
   })
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
