@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { fetchDirectoryData } from '@/lib/supabase'
 import DirectoryView from './DirectoryView'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const data = await fetchDirectoryData(params.slug)

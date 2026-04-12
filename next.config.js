@@ -9,6 +9,10 @@ const nextConfig = {
       { protocol: 'https', hostname: 'thevillagechurch.imgix.net' },
       { protocol: 'https', hostname: 'placehold.co' },
       { protocol: 'https', hostname: 'kfwtxtjqpsmxpwcndude.supabase.co' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: 'api.dicebear.com' },
+      { protocol: 'https', hostname: 'origin.thevillagechurch.net' },
+      { protocol: 'https', hostname: 'www.thevillagechurch.net' },
     ],
   },
 }
