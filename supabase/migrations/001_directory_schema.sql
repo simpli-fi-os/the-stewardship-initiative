@@ -147,7 +147,7 @@ VALUES (
   'village-church',
   'Connecting needs with the giftedness of our church family.',
   'https://www.thevillagechurch.net/Themes/TheVillageChurch/Assets/Images/primary-logo-white.svg',
-  'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3d027908df-c101-4994-a244-13fcbbc118c9?w=1100&h=550&fit=crop&auto=compress',
+  'https://origin.thevillagechurch.net/GetImage.ashx?Guid=027908df-c101-4994-a244-13fcbbc118c9',
   'https://www.thevillagechurch.net'
 );
 
@@ -179,18 +179,18 @@ INSERT INTO members (id, org_id, name, title, description, bio, email, available
   ('b0000000-0000-0000-0000-000000000012', 'a1b2c3d4-0000-0000-0000-000000000001', 'Rachel Ellis', 'Missions Coordinator', 'Coordinates logistics for local and global missions efforts. Can help with trip planning and administrative support.', 'Rachel Ellis supports the missions ministry through administrative and logistical coordination, helping to advance the gospel locally and globally.', 'rellis.tsi@example.com', true, true, false);
 
 -- Member photos (using existing imgix URLs)
-UPDATE members SET photo_url = 'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3ddc2ef162-0e17-4de5-a0ce-f4c469c53118?w=798&h=1000&fit=crop&crop=faces&auto=compress,format' WHERE id = 'b0000000-0000-0000-0000-000000000001';
-UPDATE members SET photo_url = 'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3db723bd3c-6ba8-417f-b5fb-6ee215e1cc0b?w=798&h=1000&fit=crop&crop=faces&auto=compress,format' WHERE id = 'b0000000-0000-0000-0000-000000000002';
-UPDATE members SET photo_url = 'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3dd6673b94-aa2a-4652-afaa-5b124693fd17?w=798&h=1000&fit=crop&crop=faces&auto=compress,format' WHERE id = 'b0000000-0000-0000-0000-000000000003';
-UPDATE members SET photo_url = 'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3d678fef78-0e19-4605-a404-2b7bbd7a1fdf?w=798&h=1000&fit=crop&crop=faces&auto=compress,format' WHERE id = 'b0000000-0000-0000-0000-000000000004';
-UPDATE members SET photo_url = 'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3d5ddde929-0653-47c7-9f29-751d4d7800ca?w=798&h=1000&fit=crop&crop=faces&auto=compress,format' WHERE id = 'b0000000-0000-0000-0000-000000000005';
-UPDATE members SET photo_url = 'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3dcf147e9f-8189-40e2-9866-e810eff9ea84?w=798&h=1000&fit=crop&crop=faces&auto=compress,format' WHERE id = 'b0000000-0000-0000-0000-000000000006';
-UPDATE members SET photo_url = 'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3d02942849-ddc1-465a-86b6-1d1517889943?w=798&h=1000&fit=crop&crop=faces&auto=compress,format' WHERE id = 'b0000000-0000-0000-0000-000000000007';
-UPDATE members SET photo_url = 'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3deb76d697-53f7-4b18-9cfe-4cd1294cc735?w=798&h=1000&fit=crop&crop=faces&auto=compress,format' WHERE id = 'b0000000-0000-0000-0000-000000000008';
-UPDATE members SET photo_url = 'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3d99904d02-b677-4f46-903b-7987418f21f4?w=798&h=1000&fit=crop&crop=faces&auto=compress,format' WHERE id = 'b0000000-0000-0000-0000-000000000009';
-UPDATE members SET photo_url = 'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3d5e9aad0f-73ab-4b73-99f2-8a96d1115d36?w=798&h=1000&fit=crop&crop=faces&auto=compress,format' WHERE id = 'b0000000-0000-0000-0000-000000000010';
-UPDATE members SET photo_url = 'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3dcc96b990-ab81-4520-8a9a-6c34abee0e19?w=798&h=1000&fit=crop&crop=faces&auto=compress,format' WHERE id = 'b0000000-0000-0000-0000-000000000011';
-UPDATE members SET photo_url = 'https://thevillagechurch.imgix.net/https%3a%2f%2forigin.thevillagechurch.net%2fGetImage.ashx%3fGuid%3d25bad8d6-cc1a-4c05-a64b-e68b25544632?w=798&h=1000&fit=crop&crop=faces&auto=compress,format' WHERE id = 'b0000000-0000-0000-0000-000000000012';
+UPDATE members SET photo_url = 'https://origin.thevillagechurch.net/GetImage.ashx?Guid=dc2ef162-0e17-4de5-a0ce-f4c469c53118' WHERE id = 'b0000000-0000-0000-0000-000000000001';
+UPDATE members SET photo_url = 'https://origin.thevillagechurch.net/GetImage.ashx?Guid=b723bd3c-6ba8-417f-b5fb-6ee215e1cc0b' WHERE id = 'b0000000-0000-0000-0000-000000000002';
+UPDATE members SET photo_url = 'https://origin.thevillagechurch.net/GetImage.ashx?Guid=d6673b94-aa2a-4652-afaa-5b124693fd17' WHERE id = 'b0000000-0000-0000-0000-000000000003';
+UPDATE members SET photo_url = 'https://origin.thevillagechurch.net/GetImage.ashx?Guid=678fef78-0e19-4605-a404-2b7bbd7a1fdf' WHERE id = 'b0000000-0000-0000-0000-000000000004';
+UPDATE members SET photo_url = 'https://origin.thevillagechurch.net/GetImage.ashx?Guid=5ddde929-0653-47c7-9f29-751d4d7800ca' WHERE id = 'b0000000-0000-0000-0000-000000000005';
+UPDATE members SET photo_url = 'https://origin.thevillagechurch.net/GetImage.ashx?Guid=cf147e9f-8189-40e2-9866-e810eff9ea84' WHERE id = 'b0000000-0000-0000-0000-000000000006';
+UPDATE members SET photo_url = 'https://origin.thevillagechurch.net/GetImage.ashx?Guid=02942849-ddc1-465a-86b6-1d1517889943' WHERE id = 'b0000000-0000-0000-0000-000000000007';
+UPDATE members SET photo_url = 'https://origin.thevillagechurch.net/GetImage.ashx?Guid=eb76d697-53f7-4b18-9cfe-4cd1294cc735' WHERE id = 'b0000000-0000-0000-0000-000000000008';
+UPDATE members SET photo_url = 'https://origin.thevillagechurch.net/GetImage.ashx?Guid=99904d02-b677-4f46-903b-7987418f21f4' WHERE id = 'b0000000-0000-0000-0000-000000000009';
+UPDATE members SET photo_url = 'https://origin.thevillagechurch.net/GetImage.ashx?Guid=5e9aad0f-73ab-4b73-99f2-8a96d1115d36' WHERE id = 'b0000000-0000-0000-0000-000000000010';
+UPDATE members SET photo_url = 'https://origin.thevillagechurch.net/GetImage.ashx?Guid=cc96b990-ab81-4520-8a9a-6c34abee0e19' WHERE id = 'b0000000-0000-0000-0000-000000000011';
+UPDATE members SET photo_url = 'https://origin.thevillagechurch.net/GetImage.ashx?Guid=25bad8d6-cc1a-4c05-a64b-e68b25544632' WHERE id = 'b0000000-0000-0000-0000-000000000012';
 
 -- Member Skills
 INSERT INTO member_skills (member_id, skill_id) VALUES
