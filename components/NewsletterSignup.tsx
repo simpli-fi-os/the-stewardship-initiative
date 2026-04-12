@@ -7,28 +7,46 @@ interface Props {
   subtext?: string
   className?: string
   compact?: boolean
+  placeholder?: string
 }
 
 export default function NewsletterSignup({
-  headline = 'Church Leadership Insights Weekly',
-  subtext = 'No spam. Unsubscribe anytime.',
+  headline = 'Community Updates',
+  subtext = 'New resources, provider spotlights, and ways to help. No spam.',
   className = '',
   compact = false,
+  placeholder = 'Your email address',
 }: Props) {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!email.trim()) return
 
     setStatus('loading')
+    setErrorMsg('')
+
     try {
-      // TODO: Wire to MailerLite when API key configured
-      console.log('[Newsletter] Subscribe:', email)
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setErrorMsg(data.error || 'Something went wrong.')
+        setStatus('error')
+        return
+      }
+
       setStatus('success')
       setEmail('')
     } catch {
+      setErrorMsg('Could not connect. Please try again.')
       setStatus('error')
     }
   }
@@ -36,7 +54,9 @@ export default function NewsletterSignup({
   if (status === 'success') {
     return (
       <div className={className}>
-        <p className="text-eden-tidal font-medium text-sm">You&apos;re in. Watch for insights in your inbox.</p>
+        <p className="text-eden-tidal font-medium text-sm">
+          You are in. Watch for community updates in your inbox.
+        </p>
       </div>
     )
   }
@@ -54,7 +74,7 @@ export default function NewsletterSignup({
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Your church email"
+          placeholder={placeholder}
           required
           className="form-input flex-1 text-sm"
           style={{ padding: '0.5rem 0.75rem' }}
@@ -69,7 +89,7 @@ export default function NewsletterSignup({
         </button>
       </form>
       {status === 'error' && (
-        <p className="text-eden-redwood text-xs mt-1">Something went wrong. Try again.</p>
+        <p className="text-eden-redwood text-xs mt-1">{errorMsg}</p>
       )}
     </div>
   )
