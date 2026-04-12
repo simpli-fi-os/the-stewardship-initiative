@@ -42,3 +42,5 @@ supabase/.temp/
 .Spotlight-V100
 .Trashes
 ehthumbs.db
+tsconfig.tsbuildinfo
+.next/
