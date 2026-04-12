@@ -1,73 +1,95 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ListingSubmission, SubmissionProgress, CATEGORY_TAXONOMY, COMMON_TAGS } from '@/lib/types/submission'
+import { DIRECTORY_CATEGORIES } from '@/lib/data/categories'
 
 const STEPS = [
-  { id: 1, label: 'Type', description: 'Choose organization type' },
-  { id: 2, label: 'Basic Info', description: 'Name, category, description' },
-  { id: 3, label: 'Location', description: 'Address and service area' },
-  { id: 4, label: 'Contact', description: 'Phone, email, website' },
-  { id: 5, label: 'Details', description: 'Tags and additional info' },
-  { id: 6, label: 'Review', description: 'Confirm and submit' },
+  { id: 1, label: 'Basics', description: 'Name & description' },
+  { id: 2, label: 'Location', description: 'Where you are' },
+  { id: 3, label: 'Contact', description: 'How to reach you' },
+  { id: 4, label: 'Categories', description: 'What you offer' },
+  { id: 5, label: 'Review', description: 'Confirm details' },
 ]
 
 interface FormErrors {
   [key: string]: string
 }
 
+interface ResourceSubmission {
+  name: string
+  slug?: string
+  type: string
+  description: string
+  short_description: string
+  address?: string
+  city: string
+  state: string
+  zip?: string
+  county?: string
+  phone?: string
+  email?: string
+  website?: string
+  hours?: Record<string, string>
+  tags?: string[]
+  category_ids?: number[]
+  termsAccepted: boolean
+}
+
 export default function SubmitForm() {
   const [currentStep, setCurrentStep] = useState(1)
-  const [formData, setFormData] = useState<Partial<ListingSubmission>>({})
-  const [progress, setProgress] = useState<SubmissionProgress>({
-    currentStep: 'type',
-    completedSteps: [],
-    formData: {},
+  const [formData, setFormData] = useState<Partial<ResourceSubmission>>({
+    state: 'TX',
   })
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [submitMessage, setSubmitMessage] = useState('')
-  const [selectedTags, setSelectedTags] = useState<string[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([])
+  const [customTags, setCustomTags] = useState<string[]>([])
+  const [tagInput, setTagInput] = useState('')
+  const [completedSteps, setCompletedSteps] = useState<number[]>([])
 
   // Load progress from localStorage on mount
   useEffect(() => {
-    const saved = localStorage.getItem('tsi_submission_progress')
+    const saved = localStorage.getItem('tsi_resource_submission')
     if (saved) {
-      const parsed = JSON.parse(saved)
-      setProgress(parsed)
-      setCurrentStep(parsed.currentStep)
-      setFormData(parsed.data)
-      if (parsed.data.tags) {
-        setSelectedTags(parsed.data.tags)
+      try {
+        const parsed = JSON.parse(saved)
+        setFormData(parsed.formData || {})
+        setSelectedCategories(parsed.selectedCategories || [])
+        setCustomTags(parsed.customTags || [])
+        setCompletedSteps(parsed.completedSteps || [])
+        setCurrentStep(parsed.currentStep || 1)
+      } catch (e) {
+        console.warn('Failed to load saved progress')
       }
     }
   }, [])
 
   // Save progress to localStorage whenever it changes
   useEffect(() => {
-    const newProgress = {
+    const toSave = {
       currentStep,
-      completedSteps: progress.completedSteps,
-      data: { ...formData, tags: selectedTags },
+      completedSteps,
+      formData,
+      selectedCategories,
+      customTags,
     }
-    setProgress(newProgress)
-    localStorage.setItem('tsi_submission_progress', JSON.stringify(newProgress))
-  }, [currentStep, formData, selectedTags])
+    localStorage.setItem('tsi_resource_submission', JSON.stringify(toSave))
+  }, [currentStep, completedSteps, formData, selectedCategories, customTags])
 
   const validateStep = (step: number): boolean => {
     const newErrors: FormErrors = {}
 
     if (step === 1) {
       if (!formData.type) {
-        newErrors.type = 'Please select an organization type'
+        newErrors.type = 'Please select a resource type'
       }
-    } else if (step === 2) {
       if (!formData.name || formData.name.trim() === '') {
-        newErrors.name = 'Organization name is required'
+        newErrors.name = 'Resource name is required'
       }
-      if (!formData.category) {
-        newErrors.category = 'Category is required'
+      if (!formData.short_description || formData.short_description.trim() === '') {
+        newErrors.short_description = 'Short description is required'
       }
       if (!formData.description || formData.description.length < 20) {
         newErrors.description = 'Description must be at least 20 characters'
@@ -75,20 +97,17 @@ export default function SubmitForm() {
       if (formData.description && formData.description.length > 500) {
         newErrors.description = 'Description must be under 500 characters'
       }
-    } else if (step === 3) {
-      if (!formData.address || formData.address.trim() === '') {
-        newErrors.address = 'Address is required'
+      if (!formData.short_description || formData.short_description.length > 150) {
+        newErrors.short_description = 'Short description must be under 150 characters'
       }
+    } else if (step === 2) {
       if (!formData.city || formData.city.trim() === '') {
         newErrors.city = 'City is required'
-      }
-      if (!formData.state || formData.state.trim() === '') {
-        newErrors.state = 'State is required'
       }
       if (!formData.county || formData.county.trim() === '') {
         newErrors.county = 'County is required'
       }
-    } else if (step === 4) {
+    } else if (step === 3) {
       if (!formData.phone && !formData.email && !formData.website) {
         newErrors.contact = 'At least one contact method is required'
       }
@@ -101,6 +120,14 @@ export default function SubmitForm() {
       if (formData.website && !/^https?:\/\/.+/.test(formData.website)) {
         newErrors.website = 'Please enter a valid URL starting with http'
       }
+    } else if (step === 4) {
+      if (selectedCategories.length === 0) {
+        newErrors.categories = 'Please select at least one category'
+      }
+    } else if (step === 5) {
+      if (!formData.termsAccepted) {
+        newErrors.termsAccepted = 'You must accept the terms to submit'
+      }
     }
 
     setErrors(newErrors)
@@ -109,11 +136,8 @@ export default function SubmitForm() {
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
-      if (!progress.completedSteps.includes(currentStep)) {
-        setProgress((prev) => ({
-          ...prev,
-          completedSteps: [...prev.completedSteps, currentStep],
-        }))
+      if (!completedSteps.includes(currentStep)) {
+        setCompletedSteps([...completedSteps, currentStep])
       }
       setCurrentStep(currentStep + 1)
     }
@@ -137,37 +161,50 @@ export default function SubmitForm() {
     }
   }
 
-  const handleTagToggle = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+  const handleAddTag = (tag: string) => {
+    const trimmed = tag.trim()
+    if (trimmed && !customTags.includes(trimmed)) {
+      setCustomTags([...customTags, trimmed])
+      setTagInput('')
+    }
+  }
+
+  const handleRemoveTag = (tag: string) => {
+    setCustomTags(customTags.filter((t) => t !== tag))
+  }
+
+  const handleCategoryToggle = (categoryId: number) => {
+    setSelectedCategories((prev) =>
+      prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
     )
   }
 
   const handleSubmit = async () => {
-    if (!validateStep(6)) return
+    if (!validateStep(5)) return
 
     setIsSubmitting(true)
     setSubmitStatus('idle')
 
     try {
       const submitData = {
-        type: formData.type,
-        subtype: formData.category,
         name: formData.name,
+        type: formData.type,
+        description: formData.description,
+        short_description: formData.short_description,
+        address: formData.address || null,
         city: formData.city,
-        state: formData.state,
-        zip: formData.zip,
-        county: formData.county,
-        address: formData.address,
+        state: formData.state || 'TX',
+        zip: formData.zip || null,
+        county: formData.county || null,
         phone: formData.phone || null,
         email: formData.email || null,
         website: formData.website || null,
-        description: formData.description,
-        tags: selectedTags,
-        metadata: formData.additionalData || {},
+        hours: formData.hours || null,
+        tags: customTags.length > 0 ? customTags : null,
+        category_ids: selectedCategories,
       }
 
-      const response = await fetch('/api/submit-listing', {
+      const response = await fetch('/api/submit-resource', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -177,37 +214,59 @@ export default function SubmitForm() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to submit listing')
+        throw new Error(errorData.message || 'Failed to submit resource')
       }
 
       const result = await response.json()
       setSubmitStatus('success')
       setSubmitMessage(
-        'Your listing has been submitted successfully and is pending review. We will notify you once it has been published.'
+        'Your resource has been submitted successfully and is pending review. Our team will verify and publish it within 48 hours.'
       )
-      localStorage.removeItem('tsi_submission_progress')
-      setFormData({})
+      localStorage.removeItem('tsi_resource_submission')
+      setFormData({ state: 'TX' })
       setCurrentStep(1)
-      setSelectedTags([])
+      setSelectedCategories([])
+      setCustomTags([])
+      setCompletedSteps([])
     } catch (error) {
       setSubmitStatus('error')
       setSubmitMessage(
-        error instanceof Error ? error.message : 'An error occurred while submitting your listing'
+        error instanceof Error ? error.message : 'An error occurred while submitting your resource'
       )
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const categoryOptions =
-    formData.type && CATEGORY_TAXONOMY[formData.type as keyof typeof CATEGORY_TAXONOMY]
-      ? CATEGORY_TAXONOMY[formData.type as keyof typeof CATEGORY_TAXONOMY].categories
-      : []
+  const isStepComplete = (step: number) => completedSteps.includes(step)
 
-  const isStepComplete = (step: number) => progress.completedSteps.includes(step)
+  const resourceTypes = [
+    { value: 'resource', label: 'Community Resource' },
+    { value: 'provider', label: 'Service Provider' },
+    { value: 'church', label: 'Church' },
+    { value: 'nonprofit', label: 'Nonprofit Organization' },
+    { value: 'agency', label: 'Government Agency' },
+    { value: 'government', label: 'Government Office' },
+    { value: 'education', label: 'Educational Institution' },
+    { value: 'maker', label: 'Maker/Artisan' },
+    { value: 'farm', label: 'Farm' },
+  ]
+
+  const resourceCategories = DIRECTORY_CATEGORIES.map((cat, idx) => ({
+    id: idx,
+    slug: cat.slug,
+    name: cat.name,
+    group: cat.parentGroup,
+  }))
+
+  const resourceCategories_Resources = resourceCategories.filter((c) => c.group === 'resources')
+  const resourceCategories_FamilyOffice = resourceCategories.filter((c) => c.group === 'family-office')
+
+  const shortDescCharCount = (formData.short_description || '').length
+  const descCharCount = (formData.description || '').length
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-3xl mx-auto">
       {submitStatus === 'success' && (
         <div className="mb-8 p-4 bg-eden-tidal/10 border border-eden-tidal rounded-lg">
           <h3 className="font-semibold text-eden-tidal mb-2">Submission Successful</h3>
@@ -216,8 +275,8 @@ export default function SubmitForm() {
       )}
 
       {submitStatus === 'error' && (
-        <div className="mb-8 p-4 bg-eden-redwood/10 border border-eden-redwood rounded-lg">
-          <h3 className="font-semibold text-eden-redwood mb-2">Submission Failed</h3>
+        <div className="mb-8 p-4 bg-eden-hibiscus/10 border border-eden-hibiscus rounded-lg">
+          <h3 className="font-semibold text-eden-hibiscus mb-2">Submission Failed</h3>
           <p className="text-eden-gray">{submitMessage}</p>
         </div>
       )}
@@ -262,43 +321,108 @@ export default function SubmitForm() {
           </div>
 
           {/* Step Content */}
-          <div className="bg-eden-jungle rounded-lg p-8 mb-8 min-h-96">
+          <div className="bg-eden-jungle rounded-lg p-8 mb-8 min-h-screen md:min-h-96">
             {currentStep === 1 && (
               <div>
-                <h2 className="text-2xl font-bold text-eden-marigold mb-2">
+                <h2 className="text-2xl font-display font-bold text-eden-marigold mb-2">
                   {STEPS[0].label}
                 </h2>
                 <p className="text-eden-gray mb-6">{STEPS[0].description}</p>
 
-                <div className="space-y-3">
-                  {['resource', 'provider', 'church', 'nonprofit', 'maker'].map((type) => (
-                    <label
-                      key={type}
-                      className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition ${
-                        formData.type === type
-                          ? 'border-eden-marigold bg-eden-marigold/10'
-                          : 'border-eden-jungle hover:border-eden-orchid'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="type"
-                        value={type}
-                        checked={formData.type === type}
-                        onChange={(e) => handleInputChange('type', e.target.value)}
-                        className="mr-3"
-                      />
-                      <span className="font-medium text-eden-orchid capitalize">{type}</span>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-eden-orchid mb-3">
+                      Resource Type
                     </label>
-                  ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {resourceTypes.map((type) => (
+                        <label
+                          key={type.value}
+                          className={`flex items-center p-3 rounded-lg border-2 cursor-pointer transition ${
+                            formData.type === type.value
+                              ? 'border-eden-marigold bg-eden-marigold/10'
+                              : 'border-eden-lush/20 hover:border-eden-orchid/40'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="type"
+                            value={type.value}
+                            checked={formData.type === type.value}
+                            onChange={(e) => handleInputChange('type', e.target.value)}
+                            className="mr-3"
+                          />
+                          <span className="font-medium text-eden-orchid text-sm">{type.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {errors.type && <p className="text-eden-hibiscus text-sm mt-3">{errors.type}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-eden-orchid mb-2">
+                      Resource Name
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.name || ''}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      className="w-full px-4 py-2 bg-eden-lush/80 border border-eden-tidal/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-tidal/50 focus:ring-2 focus:ring-eden-tidal/20"
+                      placeholder="e.g., Denton Community Food Bank"
+                    />
+                    {errors.name && (
+                      <p className="text-eden-hibiscus text-sm mt-1">{errors.name}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-eden-orchid mb-2">
+                      Short Description (max 150 characters)
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.short_description || ''}
+                      onChange={(e) =>
+                        handleInputChange('short_description', e.target.value.slice(0, 150))
+                      }
+                      className="w-full px-4 py-2 bg-eden-lush/80 border border-eden-tidal/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-tidal/50 focus:ring-2 focus:ring-eden-tidal/20"
+                      placeholder="A one-line summary of what you offer..."
+                      maxLength={150}
+                    />
+                    <p className="text-xs text-eden-gray mt-1">
+                      {shortDescCharCount}/150 characters
+                    </p>
+                    {errors.short_description && (
+                      <p className="text-eden-hibiscus text-sm mt-1">
+                        {errors.short_description}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-eden-orchid mb-2">
+                      Full Description (20-500 characters)
+                    </label>
+                    <textarea
+                      value={formData.description || ''}
+                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      className="w-full px-4 py-2 bg-eden-lush/80 border border-eden-tidal/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-tidal/50 focus:ring-2 focus:ring-eden-tidal/20 min-h-24 resize-none"
+                      placeholder="Tell us more about what you do and who you serve..."
+                    />
+                    <p className="text-xs text-eden-gray mt-1">
+                      {descCharCount}/500 characters
+                    </p>
+                    {errors.description && (
+                      <p className="text-eden-hibiscus text-sm mt-1">{errors.description}</p>
+                    )}
+                  </div>
                 </div>
-                {errors.type && <p className="text-eden-redwood text-sm mt-3">{errors.type}</p>}
               </div>
             )}
 
             {currentStep === 2 && (
               <div>
-                <h2 className="text-2xl font-bold text-eden-marigold mb-2">
+                <h2 className="text-2xl font-display font-bold text-eden-marigold mb-2">
                   {STEPS[1].label}
                 </h2>
                 <p className="text-eden-gray mb-6">{STEPS[1].description}</p>
@@ -306,84 +430,15 @@ export default function SubmitForm() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-eden-orchid mb-2">
-                      Organization Name
-                    </label>
-                    <input
-                      type="text"
-                      value={formData.name || ''}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      className="w-full px-4 py-2 bg-eden-lush border border-eden-marigold/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-marigold"
-                      placeholder="e.g., Community Food Bank"
-                    />
-                    {errors.name && (
-                      <p className="text-eden-redwood text-sm mt-1">{errors.name}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-eden-orchid mb-2">
-                      Category
-                    </label>
-                    <select
-                      value={formData.category || ''}
-                      onChange={(e) => handleInputChange('category', e.target.value)}
-                      className="w-full px-4 py-2 bg-eden-lush border border-eden-marigold/20 rounded-lg text-eden-orchid focus:outline-none focus:border-eden-marigold"
-                    >
-                      <option value="">Select a category</option>
-                      {categoryOptions.map((cat) => (
-                        <option key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.category && (
-                      <p className="text-eden-redwood text-sm mt-1">{errors.category}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-eden-orchid mb-2">
-                      Description (20-500 characters)
-                    </label>
-                    <textarea
-                      value={formData.description || ''}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
-                      className="w-full px-4 py-2 bg-eden-lush border border-eden-marigold/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-marigold min-h-24 resize-none"
-                      placeholder="Tell us about your organization and what you do..."
-                    />
-                    <p className="text-xs text-eden-gray mt-1">
-                      {(formData.description || '').length}/500 characters
-                    </p>
-                    {errors.description && (
-                      <p className="text-eden-redwood text-sm mt-1">{errors.description}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {currentStep === 3 && (
-              <div>
-                <h2 className="text-2xl font-bold text-eden-marigold mb-2">
-                  {STEPS[2].label}
-                </h2>
-                <p className="text-eden-gray mb-6">{STEPS[2].description}</p>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-eden-orchid mb-2">
-                      Address
+                      Address (optional)
                     </label>
                     <input
                       type="text"
                       value={formData.address || ''}
                       onChange={(e) => handleInputChange('address', e.target.value)}
-                      className="w-full px-4 py-2 bg-eden-lush border border-eden-marigold/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-marigold"
+                      className="w-full px-4 py-2 bg-eden-lush/80 border border-eden-tidal/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-tidal/50 focus:ring-2 focus:ring-eden-tidal/20"
                       placeholder="Street address"
                     />
-                    {errors.address && (
-                      <p className="text-eden-redwood text-sm mt-1">{errors.address}</p>
-                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -395,11 +450,11 @@ export default function SubmitForm() {
                         type="text"
                         value={formData.city || ''}
                         onChange={(e) => handleInputChange('city', e.target.value)}
-                        className="w-full px-4 py-2 bg-eden-lush border border-eden-marigold/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-marigold"
-                        placeholder="City"
+                        className="w-full px-4 py-2 bg-eden-lush/80 border border-eden-tidal/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-tidal/50 focus:ring-2 focus:ring-eden-tidal/20"
+                        placeholder="Denton"
                       />
                       {errors.city && (
-                        <p className="text-eden-redwood text-sm mt-1">{errors.city}</p>
+                        <p className="text-eden-hibiscus text-sm mt-1">{errors.city}</p>
                       )}
                     </div>
 
@@ -409,15 +464,14 @@ export default function SubmitForm() {
                       </label>
                       <input
                         type="text"
-                        value={formData.state || ''}
-                        onChange={(e) => handleInputChange('state', e.target.value.toUpperCase())}
+                        value={formData.state || 'TX'}
+                        onChange={(e) =>
+                          handleInputChange('state', e.target.value.toUpperCase().slice(0, 2))
+                        }
                         maxLength={2}
-                        className="w-full px-4 py-2 bg-eden-lush border border-eden-marigold/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-marigold"
+                        className="w-full px-4 py-2 bg-eden-lush/80 border border-eden-tidal/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-tidal/50 focus:ring-2 focus:ring-eden-tidal/20"
                         placeholder="TX"
                       />
-                      {errors.state && (
-                        <p className="text-eden-redwood text-sm mt-1">{errors.state}</p>
-                      )}
                     </div>
                   </div>
 
@@ -430,8 +484,8 @@ export default function SubmitForm() {
                         type="text"
                         value={formData.zip || ''}
                         onChange={(e) => handleInputChange('zip', e.target.value)}
-                        className="w-full px-4 py-2 bg-eden-lush border border-eden-marigold/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-marigold"
-                        placeholder="75201"
+                        className="w-full px-4 py-2 bg-eden-lush/80 border border-eden-tidal/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-tidal/50 focus:ring-2 focus:ring-eden-tidal/20"
+                        placeholder="76201"
                       />
                     </div>
 
@@ -443,11 +497,11 @@ export default function SubmitForm() {
                         type="text"
                         value={formData.county || ''}
                         onChange={(e) => handleInputChange('county', e.target.value)}
-                        className="w-full px-4 py-2 bg-eden-lush border border-eden-marigold/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-marigold"
-                        placeholder="Dallas"
+                        className="w-full px-4 py-2 bg-eden-lush/80 border border-eden-tidal/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-tidal/50 focus:ring-2 focus:ring-eden-tidal/20"
+                        placeholder="Denton"
                       />
                       {errors.county && (
-                        <p className="text-eden-redwood text-sm mt-1">{errors.county}</p>
+                        <p className="text-eden-hibiscus text-sm mt-1">{errors.county}</p>
                       )}
                     </div>
                   </div>
@@ -455,12 +509,12 @@ export default function SubmitForm() {
               </div>
             )}
 
-            {currentStep === 4 && (
+            {currentStep === 3 && (
               <div>
-                <h2 className="text-2xl font-bold text-eden-marigold mb-2">
-                  {STEPS[3].label}
+                <h2 className="text-2xl font-display font-bold text-eden-marigold mb-2">
+                  {STEPS[2].label}
                 </h2>
-                <p className="text-eden-gray mb-6">{STEPS[3].description}</p>
+                <p className="text-eden-gray mb-6">{STEPS[2].description}</p>
 
                 <div className="space-y-4">
                   <div>
@@ -471,11 +525,11 @@ export default function SubmitForm() {
                       type="tel"
                       value={formData.phone || ''}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className="w-full px-4 py-2 bg-eden-lush border border-eden-marigold/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-marigold"
-                      placeholder="(555) 123-4567"
+                      className="w-full px-4 py-2 bg-eden-lush/80 border border-eden-tidal/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-tidal/50 focus:ring-2 focus:ring-eden-tidal/20"
+                      placeholder="(940) 555-1234"
                     />
                     {errors.phone && (
-                      <p className="text-eden-redwood text-sm mt-1">{errors.phone}</p>
+                      <p className="text-eden-hibiscus text-sm mt-1">{errors.phone}</p>
                     )}
                   </div>
 
@@ -487,11 +541,11 @@ export default function SubmitForm() {
                       type="email"
                       value={formData.email || ''}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="w-full px-4 py-2 bg-eden-lush border border-eden-marigold/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-marigold"
-                      placeholder="info@organization.com"
+                      className="w-full px-4 py-2 bg-eden-lush/80 border border-eden-tidal/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-tidal/50 focus:ring-2 focus:ring-eden-tidal/20"
+                      placeholder="info@resource.com"
                     />
                     {errors.email && (
-                      <p className="text-eden-redwood text-sm mt-1">{errors.email}</p>
+                      <p className="text-eden-hibiscus text-sm mt-1">{errors.email}</p>
                     )}
                   </div>
 
@@ -503,16 +557,131 @@ export default function SubmitForm() {
                       type="url"
                       value={formData.website || ''}
                       onChange={(e) => handleInputChange('website', e.target.value)}
-                      className="w-full px-4 py-2 bg-eden-lush border border-eden-marigold/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-marigold"
-                      placeholder="https://www.organization.com"
+                      className="w-full px-4 py-2 bg-eden-lush/80 border border-eden-tidal/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-tidal/50 focus:ring-2 focus:ring-eden-tidal/20"
+                      placeholder="https://www.resource.com"
                     />
                     {errors.website && (
-                      <p className="text-eden-redwood text-sm mt-1">{errors.website}</p>
+                      <p className="text-eden-hibiscus text-sm mt-1">{errors.website}</p>
                     )}
                   </div>
 
                   {errors.contact && (
-                    <p className="text-eden-redwood text-sm">{errors.contact}</p>
+                    <p className="text-eden-hibiscus text-sm">{errors.contact}</p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {currentStep === 4 && (
+              <div>
+                <h2 className="text-2xl font-display font-bold text-eden-marigold mb-2">
+                  {STEPS[3].label}
+                </h2>
+                <p className="text-eden-gray mb-6">{STEPS[3].description}</p>
+
+                <div className="space-y-8">
+                  {/* Community Resources */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-eden-marigold mb-4">
+                      Community Resources & Aid
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {resourceCategories_Resources.map((cat) => (
+                        <label
+                          key={cat.id}
+                          className={`flex items-start p-3 rounded-lg border-2 cursor-pointer transition ${
+                            selectedCategories.includes(cat.id)
+                              ? 'border-eden-marigold bg-eden-marigold/10'
+                              : 'border-eden-lush/20 hover:border-eden-orchid/40'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedCategories.includes(cat.id)}
+                            onChange={() => handleCategoryToggle(cat.id)}
+                            className="mt-1 mr-3"
+                          />
+                          <span className="font-medium text-eden-orchid text-sm">{cat.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Family Office */}
+                  <div>
+                    <h3 className="text-lg font-semibold text-eden-marigold mb-4">
+                      Family Office Service Providers
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {resourceCategories_FamilyOffice.map((cat) => (
+                        <label
+                          key={cat.id}
+                          className={`flex items-start p-3 rounded-lg border-2 cursor-pointer transition ${
+                            selectedCategories.includes(cat.id)
+                              ? 'border-eden-marigold bg-eden-marigold/10'
+                              : 'border-eden-lush/20 hover:border-eden-orchid/40'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedCategories.includes(cat.id)}
+                            onChange={() => handleCategoryToggle(cat.id)}
+                            className="mt-1 mr-3"
+                          />
+                          <span className="font-medium text-eden-orchid text-sm">{cat.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  {errors.categories && (
+                    <p className="text-eden-hibiscus text-sm">{errors.categories}</p>
+                  )}
+                </div>
+
+                {/* Tags */}
+                <div className="mt-8 pt-8 border-t border-eden-tidal/20">
+                  <label className="block text-sm font-medium text-eden-orchid mb-3">
+                    Add Tags (optional)
+                  </label>
+                  <div className="flex gap-2 mb-3">
+                    <input
+                      type="text"
+                      value={tagInput}
+                      onChange={(e) => setTagInput(e.target.value)}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault()
+                          handleAddTag(tagInput)
+                        }
+                      }}
+                      className="flex-1 px-4 py-2 bg-eden-lush/80 border border-eden-tidal/20 rounded-lg text-eden-orchid placeholder-eden-gray focus:outline-none focus:border-eden-tidal/50 focus:ring-2 focus:ring-eden-tidal/20"
+                      placeholder="Type a tag and press Enter..."
+                    />
+                    <button
+                      onClick={() => handleAddTag(tagInput)}
+                      className="px-4 py-2 bg-eden-marigold text-white rounded-lg font-medium hover:bg-eden-marigold/90 transition"
+                    >
+                      Add
+                    </button>
+                  </div>
+                  {customTags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {customTags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-flex items-center gap-2 px-3 py-1 bg-eden-marigold/20 border border-eden-marigold/40 text-eden-marigold text-sm rounded-full"
+                        >
+                          {tag}
+                          <button
+                            onClick={() => handleRemoveTag(tag)}
+                            className="hover:text-eden-hibiscus transition"
+                          >
+                            &times;
+                          </button>
+                        </span>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
@@ -520,69 +689,49 @@ export default function SubmitForm() {
 
             {currentStep === 5 && (
               <div>
-                <h2 className="text-2xl font-bold text-eden-marigold mb-2">
+                <h2 className="text-2xl font-display font-bold text-eden-marigold mb-2">
                   {STEPS[4].label}
                 </h2>
                 <p className="text-eden-gray mb-6">{STEPS[4].description}</p>
 
-                <div>
-                  <label className="block text-sm font-medium text-eden-orchid mb-4">
-                    Select relevant tags (optional)
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {COMMON_TAGS.map((tag) => (
-                      <button
-                        key={tag}
-                        onClick={() => handleTagToggle(tag)}
-                        className={`px-3 py-1 rounded-full text-sm font-medium transition ${
-                          selectedTags.includes(tag)
-                            ? 'bg-eden-marigold text-white'
-                            : 'bg-eden-jungle border border-eden-marigold/20 text-eden-gray hover:border-eden-marigold'
-                        }`}
-                      >
-                        {tag}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {currentStep === 6 && (
-              <div>
-                <h2 className="text-2xl font-bold text-eden-marigold mb-2">
-                  {STEPS[5].label}
-                </h2>
-                <p className="text-eden-gray mb-6">{STEPS[5].description}</p>
-
-                <div className="space-y-4 bg-eden-lush rounded-lg p-6 mb-6">
+                <div className="space-y-4 bg-eden-lush/40 rounded-lg p-6 mb-6 border border-eden-tidal/20">
                   <div>
                     <p className="text-xs text-eden-gray uppercase font-semibold mb-1">Type</p>
-                    <p className="text-eden-orchid font-medium capitalize">{formData.type}</p>
+                    <p className="text-eden-orchid font-medium">
+                      {resourceTypes.find((t) => t.value === formData.type)?.label}
+                    </p>
                   </div>
 
                   <div>
-                    <p className="text-xs text-eden-gray uppercase font-semibold mb-1">
-                      Organization Name
-                    </p>
+                    <p className="text-xs text-eden-gray uppercase font-semibold mb-1">Name</p>
                     <p className="text-eden-orchid font-medium">{formData.name}</p>
                   </div>
 
                   <div>
                     <p className="text-xs text-eden-gray uppercase font-semibold mb-1">
-                      Description
+                      Short Description
                     </p>
-                    <p className="text-eden-gray text-sm">{formData.description}</p>
+                    <p className="text-eden-gray text-sm">{formData.short_description}</p>
                   </div>
 
                   <div>
                     <p className="text-xs text-eden-gray uppercase font-semibold mb-1">
-                      Location
+                      Full Description
                     </p>
-                    <p className="text-eden-gray text-sm">
-                      {formData.address}, {formData.city}, {formData.state} {formData.zip}
-                    </p>
+                    <p className="text-eden-gray text-sm">{formData.description}</p>
                   </div>
+
+                  {(formData.address || formData.city) && (
+                    <div>
+                      <p className="text-xs text-eden-gray uppercase font-semibold mb-1">
+                        Location
+                      </p>
+                      <p className="text-eden-gray text-sm">
+                        {formData.address && `${formData.address}, `}
+                        {formData.city}, {formData.state} {formData.zip}
+                      </p>
+                    </div>
+                  )}
 
                   {(formData.phone || formData.email || formData.website) && (
                     <div>
@@ -603,11 +752,29 @@ export default function SubmitForm() {
                     </div>
                   )}
 
-                  {selectedTags.length > 0 && (
+                  {selectedCategories.length > 0 && (
+                    <div>
+                      <p className="text-xs text-eden-gray uppercase font-semibold mb-2">
+                        Categories
+                      </p>
+                      <div className="space-y-1">
+                        {selectedCategories.map((id) => {
+                          const cat = resourceCategories.find((c) => c.id === id)
+                          return (
+                            <p key={id} className="text-eden-gray text-sm">
+                              {cat?.name}
+                            </p>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {customTags.length > 0 && (
                     <div>
                       <p className="text-xs text-eden-gray uppercase font-semibold mb-2">Tags</p>
                       <div className="flex flex-wrap gap-2">
-                        {selectedTags.map((tag) => (
+                        {customTags.map((tag) => (
                           <span
                             key={tag}
                             className="px-2 py-1 bg-eden-marigold/10 border border-eden-marigold/20 text-eden-marigold text-xs rounded"
@@ -620,7 +787,7 @@ export default function SubmitForm() {
                   )}
                 </div>
 
-                <label className="flex items-start gap-3 p-4 bg-eden-lush rounded-lg border border-eden-marigold/20 mb-6">
+                <label className="flex items-start gap-3 p-4 bg-eden-lush/40 rounded-lg border border-eden-tidal/20 mb-6">
                   <input
                     type="checkbox"
                     checked={formData.termsAccepted || false}
@@ -629,11 +796,11 @@ export default function SubmitForm() {
                   />
                   <span className="text-sm text-eden-gray">
                     I confirm that the information provided is accurate and authorize TSI to
-                    publish this listing in the directory.
+                    verify and publish this resource in the directory.
                   </span>
                 </label>
                 {errors.termsAccepted && (
-                  <p className="text-eden-redwood text-sm mb-4">{errors.termsAccepted}</p>
+                  <p className="text-eden-hibiscus text-sm mb-4">{errors.termsAccepted}</p>
                 )}
               </div>
             )}
@@ -653,7 +820,7 @@ export default function SubmitForm() {
               Previous
             </button>
 
-            {currentStep < 6 ? (
+            {currentStep < 5 ? (
               <button
                 onClick={handleNext}
                 className="px-6 py-2 bg-eden-marigold text-white rounded-lg font-medium hover:bg-eden-marigold/90 transition"
@@ -670,7 +837,7 @@ export default function SubmitForm() {
                     : 'bg-eden-tidal text-white hover:bg-eden-tidal/90'
                 }`}
               >
-                {isSubmitting ? 'Submitting...' : 'Submit Listing'}
+                {isSubmitting ? 'Submitting...' : 'Submit Resource'}
               </button>
             )}
           </div>

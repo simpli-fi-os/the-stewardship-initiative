@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
-import Header from '@/components/Header'
 import Navigation from '@/components/Navigation'
 
 const inter = Inter({
@@ -23,10 +22,10 @@ export const metadata: Metadata = {
     default: 'The Stewardship Initiative',
     template: '%s | The Stewardship Initiative',
   },
-  description: 'Within every community lies a network of trusted skills and generous hearts. We make them visible, connecting member needs with member gifts.',
+  description: 'When you need help, the answer is closer than you think. TSI makes invisible community resources findable, trustworthy, and actionable.',
   openGraph: {
     title: 'The Stewardship Initiative',
-    description: 'Within every community lies a network of trusted skills and generous hearts. We make them visible, connecting member needs with member gifts.',
+    description: 'When you need help, the answer is closer than you think. TSI makes invisible community resources findable, trustworthy, and actionable.',
     url: 'https://thestewardshipinitiative.org',
     siteName: 'The Stewardship Initiative',
     images: [{ url: '/images/preview-card.png', width: 1200, height: 630 }],
@@ -37,7 +36,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@Hunter_Lott_',
     title: 'The Stewardship Initiative',
-    description: 'Within every community lies a network of trusted skills and generous hearts. We make them visible.',
+    description: 'When you need help, the answer is closer than you think. TSI makes invisible community resources findable and actionable.',
     images: ['/images/preview-card.png'],
   },
   icons: {
@@ -58,7 +57,6 @@ export default function RootLayout({
           Skip to main content
         </a>
         <Navigation />
-        <Header />
         {children}
       </body>
     </html>

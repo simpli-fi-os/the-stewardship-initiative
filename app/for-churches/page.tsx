@@ -1,54 +1,36 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 import ScrollReveal from '@/components/ScrollReveal'
-import AnimatedCounter from '@/components/AnimatedCounter'
 
 export const metadata: Metadata = {
-  title: 'For Churches',
-  description: 'The skills directory your church has been missing. Join churches transforming their congregation with TSI.',
+  title: 'For Churches | The Stewardship Initiative',
+  description: 'Help your congregation find each other. A free resource directory built for churches who believe in stewardship.',
 }
 
 export default function ForChurchesPage() {
   return (
-    <div className="min-h-screen bg-eden-jungle text-eden-orchid">
+    <div className="min-h-screen bg-eden-jungle text-eden-orchid flex flex-col">
       <div className="px-6 pt-10">
         <Header />
       </div>
 
+      <main id="main-content" className="flex-1 w-full px-6 py-20">
       {/* Hero */}
-      <section className="px-6 py-20 md:py-28">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="max-w-4xl mx-auto text-center mb-20">
+        <ScrollReveal>
           <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            The Skills Directory Your Church Has Been Missing
+            Your Congregation Already Has Everything It Needs. Help Them Find Each Other.
           </h1>
           <p className="text-lg text-sage max-w-2xl mx-auto mb-10">
-            Join churches transforming their congregation in one afternoon.
+            A free resource directory built for churches who believe in stewardship of gifts, skills, and community.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/get-started" className="btn-primary">Start Free Now</Link>
-            <Link href="/directory/village-church" className="btn-secondary">See Demo</Link>
+            <Link href="/submit" className="btn-primary">List Your Church Free</Link>
+            <Link href="/search" className="btn-secondary">Browse the Directory</Link>
           </div>
-        </div>
-      </section>
-
-      {/* Video Placeholder */}
-      <section className="px-6 pb-20">
-        <div className="max-w-3xl mx-auto">
-          <ScrollReveal>
-            <h2 className="font-display text-2xl font-bold text-center mb-6">See It in Action</h2>
-            <div className="aspect-video eden-glass rounded-2xl flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-16 h-16 mx-auto rounded-full bg-eden-marigold/20 flex items-center justify-center mb-3">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-eden-marigold ml-1">
-                    <polygon points="5 3 19 12 5 21 5 3" />
-                  </svg>
-                </div>
-                <p className="text-sm text-sage">Watch how The Village Church set up their directory in 15 minutes</p>
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
+        </ScrollReveal>
       </section>
 
       {/* Before / After */}
@@ -119,36 +101,20 @@ export default function ForChurchesPage() {
         </div>
       </section>
 
-      {/* Testimonial / Case Study */}
+      {/* Early Adopter CTA */}
       <section className="px-6 py-20">
-        <div className="max-w-3xl mx-auto text-center">
+        <div className="max-w-3xl mx-auto">
           <ScrollReveal>
-            <h2 className="font-display text-3xl font-bold mb-10">Real Results from Real Churches</h2>
-          </ScrollReveal>
-          <ScrollReveal delay={200}>
-            <blockquote className="eden-glass p-8 rounded-xl border-l-4 border-eden-hibiscus text-left mb-10">
-              <p className="font-display text-xl text-eden-orchid italic leading-relaxed mb-4">
-                &ldquo;We discovered 47 skills we didn&apos;t know existed. Three members connected to help each other in the first week. This is what the church is supposed to be.&rdquo;
+            <div className="eden-glass p-10 rounded-xl border-l-4 border-eden-hibiscus text-center">
+              <h2 className="font-display text-2xl md:text-3xl font-bold mb-4">
+                Be One of the First Churches on TSI
+              </h2>
+              <p className="text-eden-gray text-lg leading-relaxed mb-6">
+                TSI is building the community resource directory that Denton County has been missing. Churches that list early get the most visibility as families start discovering resources through the platform.
               </p>
-              <p className="text-sm text-sage">— Pastor David Mitchell, The Village Church</p>
-            </blockquote>
+              <Link href="/submit" className="btn-primary inline-block">List Your Church Free</Link>
+            </div>
           </ScrollReveal>
-          <div className="grid grid-cols-3 gap-6">
-            {[
-              { num: 47, suffix: ' skills', label: 'Discovered' },
-              { num: 3, suffix: '', label: 'Connections in week 1' },
-              { num: 100, suffix: '%', label: 'Adoption rate' },
-            ].map((stat, i) => (
-              <ScrollReveal key={i} delay={i * 100}>
-                <div className="text-center">
-                  <p className="font-display text-3xl font-bold text-eden-marigold">
-                    <AnimatedCounter target={stat.num} suffix={stat.suffix} />
-                  </p>
-                  <p className="text-xs text-sage mt-1">{stat.label}</p>
-                </div>
-              </ScrollReveal>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -178,17 +144,20 @@ export default function ForChurchesPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="px-6 py-20 text-center">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
-            Your Church Already Has Everything It Needs. It Just Needs to Be Seen.
+      <section className="max-w-2xl mx-auto text-center">
+        <ScrollReveal>
+          <h2 className="font-display text-3xl md:text-4xl font-bold mb-6">
+            Your Congregation Is Full of Hidden Gifts. Help Them Be Seen.
           </h2>
-          <Link href="/get-started" className="btn-primary text-lg mt-8 inline-block" style={{ padding: '1rem 3rem' }}>
-            Start Your Church Directory Free
+          <Link href="/submit" className="btn-primary text-lg" style={{ padding: '1rem 3rem' }}>
+            List Your Church Free
           </Link>
-          <p className="text-xs text-sage mt-4">No credit card. No setup fee. Unlimited members. Cancel anytime.</p>
-        </div>
+          <p className="text-xs text-sage mt-6">No credit card. No setup fee. No obligation.</p>
+        </ScrollReveal>
       </section>
+      </main>
+
+      <Footer backLink="/" backLabel="Back to Home" />
     </div>
   )
 }

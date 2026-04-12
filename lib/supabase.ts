@@ -76,8 +76,15 @@ export interface MemberInsert {
 }
 
 // Fetch directory data by org slug — returns org + approved members with skills
+// Uses server client (service role) to bypass RLS — this function runs only on the server
 export async function fetchDirectoryData(slug: string): Promise<{ org: Organization; members: Member[] } | null> {
-  const supabase = getSupabase()
+  // Use service role client if available (server-side), fall back to anon client
+  let supabase: SupabaseClient
+  try {
+    supabase = createServerClient()
+  } catch {
+    supabase = getSupabase()
+  }
 
   // Fetch organization
   const { data: org, error: orgError } = await supabase

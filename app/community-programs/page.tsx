@@ -97,7 +97,7 @@ export default function CommunityProgramsPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/get-started" className="btn-primary">Partner With Us</Link>
-              <Link href="/directory/village-church" className="btn-secondary">View the Directory</Link>
+              <Link href="/search" className="btn-secondary">View the Directory</Link>
             </div>
           </ScrollReveal>
         </div>

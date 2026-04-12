@@ -36,14 +36,14 @@ function HeroSection() {
         <h1
           className={`font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 transition-all duration-1000 ${headlineVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
         >
-          The Skills That Connect Your Community Are Already{' '}
+          The Resources That Connect Your Community Are Already{' '}
           <span className="text-eden-hibiscus animate-heartbeat inline-block">Inside</span>.
         </h1>
 
         <p
           className={`text-lg md:text-xl text-eden-orchid/80 max-w-2xl mx-auto mb-10 transition-all duration-1000 delay-300 ${contentVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
         >
-          TSI helps every community discover, vet, and activate the hidden talent sitting right beside them.
+          When you need help, the answer is closer than you think. TSI makes invisible community resources findable, trustworthy, and actionable.
         </p>
 
         <div

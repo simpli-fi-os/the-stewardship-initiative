@@ -23,7 +23,7 @@ export default function ForFirstRespondersPage() {
             First responder advisors. Family season guides. When you need help, someone who <em>gets it</em> is right there.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/directory/village-church" className="btn-primary">Explore Specialists</Link>
+            <Link href="/search" className="btn-primary">Explore Specialists</Link>
             <Link href="/get-started" className="btn-secondary">List Your Practice</Link>
           </div>
         </div>
@@ -116,7 +116,7 @@ export default function ForFirstRespondersPage() {
           Your Family Deserves Specialists Who Understand.
         </h2>
         <p className="text-sage mb-8">The people who serve deserve people who serve them back.</p>
-        <Link href="/directory/village-church" className="btn-primary text-lg" style={{ padding: '1rem 3rem' }}>
+        <Link href="/search" className="btn-primary text-lg" style={{ padding: '1rem 3rem' }}>
           Find Your Specialist
         </Link>
       </section>

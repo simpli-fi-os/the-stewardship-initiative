@@ -142,7 +142,7 @@ export default async function SkillPage({ params }: Props) {
           <p className="text-sm text-sage mb-6">
             TSI helps communities discover the hidden skills sitting right beside them.
           </p>
-          <Link href="/directory/village-church" className="btn-primary text-sm">
+          <Link href="/search" className="btn-primary text-sm">
             Search the Directory
           </Link>
         </div>

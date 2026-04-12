@@ -24,7 +24,7 @@ export default function ForProvidersPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/get-started" className="btn-primary">Create Free Profile</Link>
-            <Link href="/directory/village-church" className="btn-secondary">See Examples</Link>
+            <Link href="/search" className="btn-secondary">See Examples</Link>
           </div>
         </div>
       </section>
