@@ -28,3 +28,15 @@
 | 2026-04-21 | resource_category_guide | Free and Low-Cost Legal Help in Denton County (2026) | 1060 | draft |
 | 2026-04-21 | resource_category_guide | Diaper Banks and Infant Supply Help in Denton County (2026) | 990 | draft |
 | 2026-04-21 | provider_category_guide | Finding a Dentist in Denton County (2026) | 870 | draft |
+| 2026-04-22 | resource_category_guide | Free Tax Preparation Help in Denton County (2026) | 1089 | draft |
+| 2026-04-22 | resource_category_guide | Prescription Medication Assistance in Denton County (2026) | 1061 | draft |
+| 2026-04-22 | provider_category_guide | Finding a Pediatrician in Denton County (2026) | 927 | draft |
+| 2026-04-23 | resource_category_guide | Summer Programs and Camps for Denton County Kids (2026) | 1125 | draft |
+| 2026-04-23 | resource_category_guide | Free and Low-Cost Dental Care in Denton County (2026) | 1090 | draft |
+| 2026-04-23 | provider_category_guide | Finding a Therapist or Counselor in Denton County (2026) | 890 | draft |
+| 2026-04-24 | resource_category_guide | Homeless Shelters and Emergency Housing in Denton County (2026) | 1080 | draft |
+| 2026-04-24 | resource_category_guide | Clothing Closets and Free Clothing Help in Denton County (2026) | 975 | draft |
+| 2026-04-24 | provider_category_guide | Finding a Primary Care Doctor in Denton County (2026) | 895 | draft |
+| 2026-04-27 | resource_category_guide | Help for Grandparents Raising Grandchildren in Denton County (2026) | 1080 | draft |
+| 2026-04-27 | resource_category_guide | English Classes and Immigrant Family Resources in Denton County (2026) | 1095 | draft |
+| 2026-04-27 | provider_category_guide | Finding an OB-GYN in Denton County (2026) | 880 | draft |

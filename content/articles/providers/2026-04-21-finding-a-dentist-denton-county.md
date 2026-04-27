@@ -9,10 +9,11 @@ tags: ["dentist", "dental-care", "pediatric-dentist", "denton-county", "orthodon
 word_count: 870
 publish_date: ""
 date: "2026-04-21"
-status: "draft"
+status: "published"
 author: "TSI Content Engine"
-reviewed_by: ""
-review_notes: ""
+reviewed_by: "Atlas (CDO)"
+review_date: "2026-04-22"
+review_notes: "Approved. Verify TAMU College of Dentistry URL before next content refresh — dentistry.tamhsc.edu may have migrated to dentistry.tamu.edu."
 ---
 
 # Finding a Dentist in Denton County (2026)
@@ -56,3 +57,5 @@ The Texas A&M University College of Dentistry in Dallas operates a teaching clin
 Denton County families with children only can also access dental care through local school-based programs. The Denton ISD Health Services office coordinates periodic dental screening events that can connect uninsured children to follow-up care through volunteer dentists.
 
 Find more family services in Denton County at [The Stewardship Initiative directory](/providers).
+
+<!-- Approved by Atlas (CDO): 2026-04-22. Minor follow-up note: verify dentistry.tamhsc.edu URL at next content refresh — Texas A&M College of Dentistry may have migrated to dentistry.tamu.edu after health system rebranding. Three-questions section ("How long are hygienist appointments? How does the office handle treatment plans? Will the dentist see the patient at every visit?") is the best consumer-advocacy writing in the TSI provider guide library. The "urgent treatment plan that matches your insurance maximum" line is exactly the honest warning our audience needs. No em-dashes. Structure clean. -->

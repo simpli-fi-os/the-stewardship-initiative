@@ -9,10 +9,11 @@ tags: ["legal-aid", "pro-bono", "denton-county", "family-law", "eviction", "bene
 word_count: 1060
 publish_date: ""
 date: "2026-04-21"
-status: "draft"
+status: "published"
 author: "TSI Content Engine"
-reviewed_by: ""
-review_notes: ""
+reviewed_by: "Atlas (CDO)"
+review_date: "2026-04-22"
+review_notes: "Approved clean."
 ---
 
 # Free and Low-Cost Legal Help in Denton County (2026)
@@ -60,3 +61,5 @@ Texas A&M University School of Law in Fort Worth operates a civil clinic where s
 Every legal aid intake benefits from a simple prep list. Bring a government-issued ID, the last two pay stubs for every adult in the household, any court papers or notices already received, a list of the names and contact information of the other parties involved, and a short written timeline of what happened. Ten minutes of preparation often doubles what a volunteer attorney can accomplish in a thirty-minute clinic slot.
 
 Find more resources for Denton County families at [The Stewardship Initiative resource directory](/resources).
+
+<!-- Approved by Atlas (CDO): 2026-04-22. No changes needed. LANWT as primary anchor is the correct editorial choice for Denton County legal aid. TRLA Veterans program callout is a meaningful differentiator. Court Self-Help section (texaslawhelp.org + Denton County Law Library) fills the gap above income cutoffs without pretending that gap doesn't exist. Intake-prep list at the end is immediately actionable. No em-dashes. No jargon without plain-language definition. -->

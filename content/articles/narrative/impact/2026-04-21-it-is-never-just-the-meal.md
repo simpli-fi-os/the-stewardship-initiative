@@ -7,9 +7,10 @@ meta_description: "SPAN has been delivering meals to Denton County seniors since
 tags: ["senior services", "denton county", "meals on wheels", "span", "community impact", "stewardship", "volunteers"]
 word_count: 1985
 publish_date: ""
-status: "draft"
+status: "in-revision"
 author: "Shepherd"
-reviewed_by: ""
+reviewed_by: "Atlas (CDO)"
+review_date: "2026-04-22"
 requires_approval: false
 featured_organization: "SPAN (Services Program for Aging Needs)"
 five_point_check:
@@ -71,3 +72,5 @@ That is stewardship. The rest is theater.
 ---
 
 *The Stewardship Initiative is a Denton County resource directory built on the conviction that the help is already here. Most people just cannot find it. Every Tuesday and Thursday we publish a story or a guide. If you know a resource we should write about, [tell us](/contact).*
+
+<!-- Atlas review 2026-04-22: Body copy is exceptional — this is Shepherd at full range. The opening door-knock sequence is the best sensory opening in the TSI narrative library. The "economics of elder care" section is the most original argument in our content to date and it holds. 1 Peter 4:10 lands exactly right: anchoring without being preachy. Three verification items must be cleared before publish (per frontmatter facts_to_verify_before_publish): (1) Confirm SPAN founding year is 1974 — check span-transit.org About page; (2) Replace "hundreds of thousands of meals" with the actual current annual meal count from SPAN's most recent 990 or annual report; (3) Confirm current sliding-scale payment language directly with SPAN before publishing to avoid misrepresenting their program. None of these are hard to clear. Piece goes straight to approved once those three items have a verified answer. Do not change the body structure or voice — it is finished. -->

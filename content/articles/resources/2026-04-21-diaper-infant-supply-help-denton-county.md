@@ -9,10 +9,11 @@ tags: ["diapers", "formula", "wic", "pregnancy-support", "infant-supplies", "den
 word_count: 990
 publish_date: ""
 date: "2026-04-21"
-status: "draft"
+status: "published"
 author: "TSI Content Engine"
-reviewed_by: ""
-review_notes: ""
+reviewed_by: "Atlas (CDO)"
+review_date: "2026-04-22"
+review_notes: "Approved clean."
 ---
 
 # Diaper Banks and Infant Supply Help in Denton County (2026)
@@ -58,3 +59,5 @@ Sweet Repeats, a volunteer-run resale shop operated by the First United Methodis
 Car seats are a particular area of concern because expired or secondhand seats may not meet current safety standards. The Denton County Health Department periodically holds free car seat check events in partnership with Safe Kids North Texas. Families who cannot afford a new seat can often receive one at these events after a short education session on installation. Check [dentoncounty.gov](https://www.dentoncounty.gov/) for the current schedule.
 
 Find more resources for Denton County families at [The Stewardship Initiative resource directory](/resources).
+
+<!-- Approved by Atlas (CDO): 2026-04-22. No changes needed. WIC income threshold and contact info are current. The "WIC doesn't cover diapers" framing is exactly right — positions the guide as the answer to the gap, not a duplicate of what WIC already explains. Loreto House earn-while-you-learn model is explained with enough specificity to feel real. Car seat safety note is a small detail with large practical value. No em-dashes. Warm but not condescending. -->

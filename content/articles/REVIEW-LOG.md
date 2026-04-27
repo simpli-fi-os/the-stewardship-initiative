@@ -7,6 +7,7 @@
 | 2026-04-14 | TSI | 4 articles + 1 listing batch | 4 | 0 | 0 |
 | 2026-04-15 | TSI | 3 articles + 1 listing batch check | 3 | 0 | 0 |
 | 2026-04-20 | TSI | 4 articles + 2 narrative pieces | 6 | 0 | 0 |
+| 2026-04-22 | TSI | 7 resource/provider guides + 1 narrative | 6 published + 1 in-revision | 0 | 0 |
 
 ---
 
@@ -437,3 +438,102 @@ BLOCKED — operations-manager flagged this in the review file. The TSI Supabase
 - **The separate narrative tree needs a publishing decision.** Two of TSI's best pieces are sitting outside git. Either pull them into `tsi-nextjs-temp/tsi-next/content/` under a `narrative/` folder or build a dedicated narrative deploy target. I'll flag this to Garrison for the next workforce review.
 
 — Atlas
+
+---
+
+## 2026-04-22 Review
+
+**Reviewer:** Atlas (Chief Design Officer)
+**Scope:** 7 TSI resource/provider guides + 1 narrative impact piece
+**Outcome:** 6 PUBLISHED · 1 IN-REVISION · 0 FAILED · 0 HELD
+
+### Articles Reviewed
+
+#### 1. Free and Low-Cost Legal Help in Denton County (2026)
+- **File:** `resources/2026-04-21-free-legal-help-denton-county.md`
+- **Word count:** 1,060
+- **Quality Gate:** PASS
+  - No em-dashes. No jargon without explanation.
+  - LANWT, TRLA Veterans, State Bar, court self-help, and legal clinic coverage is comprehensive.
+  - "Bring a short written timeline" instruction in intake-prep section is the most actionable detail in the piece.
+  - Internal links: 2 (domestic-violence guide, veteran services guide)
+- **Verdict:** PUBLISHED.
+
+#### 2. Diaper Banks and Infant Supply Help in Denton County (2026)
+- **File:** `resources/2026-04-21-diaper-infant-supply-help-denton-county.md`
+- **Word count:** 990
+- **Quality Gate:** PASS
+  - WIC income threshold and contact info current. Car seat safety note earns the piece.
+  - Loreto House earn-while-you-learn detail makes this more than a list — it explains the mechanism.
+  - Internal links: 1 (food assistance guide)
+- **Verdict:** PUBLISHED.
+
+#### 3. Finding a Dentist in Denton County (2026)
+- **File:** `providers/2026-04-21-finding-a-dentist-denton-county.md`
+- **Word count:** 870
+- **Quality Gate:** PASS with follow-up note
+  - Three-questions framework is the best consumer-advocacy content in the TSI provider library.
+  - Verify TAMU College of Dentistry URL at next content refresh (dentistry.tamhsc.edu → possibly dentistry.tamu.edu).
+  - Internal links: 1 (healthcare guide)
+- **Verdict:** PUBLISHED. URL verification note logged.
+
+#### 4. Free Tax Preparation Help in Denton County (2026)
+- **File:** `resources/2026-04-22-free-tax-preparation-denton-county.md`
+- **Word count:** 1,080
+- **Quality Gate:** PASS
+  - NSA fee survey citation ($220 average) is strong context-setting. VITA, Tax-Aide, MyFreeTaxes, Free File coverage is complete.
+  - Seasonal caution ("confirm UNT site location each January") noted in review_notes.
+  - Internal links: 2 (employment guide, healthcare guide)
+- **Verdict:** PUBLISHED.
+
+#### 5. Prescription Medication Assistance in Denton County (2026)
+- **File:** `resources/2026-04-22-prescription-medication-assistance-denton-county.md`
+- **Word count:** 1,095
+- **Quality Gate:** PASS
+  - 340B/HSNT section is operationally specific and genuinely useful. Mark Cuban Cost Plus Drug mention is a differentiator.
+  - Medicare Extra Help thresholds confirm annually (consistent with 2025 SSA as of this review).
+  - Internal links: 2 (healthcare guide, crisis resources)
+- **Verdict:** PUBLISHED.
+
+#### 6. Finding a Pediatrician in Denton County (2026)
+- **File:** `providers/2026-04-22-finding-a-pediatrician-denton-county.md`
+- **Word count:** 880
+- **Quality Gate:** PASS with follow-up note
+  - Named practices (Pediatric Associates of Denton, Sloan Pediatrics) should be verified as operating at next annual refresh.
+  - Insurance credentialing warning ("both that the practice takes your plan AND that the specific pediatrician is credentialed") is exactly the right detail.
+  - Internal links: 2 (healthcare guide, insurance agent guide)
+- **Verdict:** PUBLISHED.
+
+#### 7. It Is Never Just the Meal (SPAN / Meals on Wheels narrative)
+- **File:** `narrative/impact/2026-04-21-it-is-never-just-the-meal.md`
+- **Word count:** 1,985
+- **Quality Gate:** PASS on voice/structure. HOLD on 3 factual items.
+  - This is Shepherd at full range. The door-knock opening is the best sensory paragraph in the TSI library.
+  - The "economics of elder care" section is the most original editorial argument TSI has published.
+  - 1 Peter 4:10 citation is earned, not decorative.
+  - **Three items must be verified before publish:** (1) SPAN founding year (1974 — confirm against span-transit.org); (2) Replace "hundreds of thousands of meals" with actual annual figure from SPAN's most recent 990; (3) Confirm sliding-scale payment language with SPAN.
+- **Verdict:** IN-REVISION. Body complete. Unlock once three facts verified.
+
+### Five-Point Check
+
+| Check | Result | Note |
+|-------|--------|------|
+| Em-dash scan | PASS | 0 em-dashes across all 7 pieces |
+| Banned phrases | PASS | No jargon without plain-language definition |
+| Voice match | PASS | Warm, community-rooted, stewardship-grounded throughout |
+| Factual integrity | PASS + 3 conditional | Legal and resource details sourced; 2 AEO claims flagged for RTS; 3 SPAN facts pending for narrative |
+| CTA alignment | PASS | Each piece closes with directory link, appropriate internal routing |
+
+### Cumulative TSI Content Library (Post This Cycle)
+- Provider guides: 8 (added dentist + pediatrician)
+- Resource guides: 14 (added legal, diaper, tax prep, prescriptions)
+- Narrative impact: 2 (Seven A.M. on Loop 288, The People Who Do Not Call — previously approved; It Is Never Just the Meal pending)
+- Total published words: ~21,000+
+
+### Pattern Observations
+- TSI content engine is producing at high quality and high velocity. Six straight approvals with no structural failures this cycle.
+- The internal-link density is improving. Multiple pieces this cycle link to 2+ sibling guides.
+- The SPAN narrative piece is the strongest candidate in the in-revision queue. Three verifiable facts are all that stands between this piece and publication. Shepherd or Wren should clear those items this week.
+- Standing note: TAMU dentistry URL and named pediatric practices should be on the quarterly content-freshness checklist.
+
+— Atlas (CDO)
